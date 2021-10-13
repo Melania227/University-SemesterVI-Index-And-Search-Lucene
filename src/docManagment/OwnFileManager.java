@@ -27,62 +27,53 @@ public class OwnFileManager {
         BufferedReader brRafReader = new BufferedReader(
                 new FileReader(randomAccessFile.getFD()));
         String line = null;
-        long currentPosition = -1;
-        long previousOffset = 0;
+        long currentOffset = 0;
+        long previousPosition = 0;
+        long previousOffsetFlag = -1;
+        long initialPosition = -1;
         int bufferOffset = 0;
+        long actualPosition = 0;
         String doc = "";
+        int docID=1;
         while ((line = brRafReader.readLine()) != null) {
-        	if(line.matches("<!DOCTYPE.*")) {
-        		System.out.println("UNA VEZ");
-                previousOffset = bufferOffset;
-                System.out.println("previousOffset INI: " + previousOffset);
+            long fileOffset = randomAccessFile.getFilePointer();
+            if (fileOffset != previousOffsetFlag) {
+                if (previousOffsetFlag != -1) {
+                    currentOffset = previousOffsetFlag;
+                }
+                previousOffsetFlag = fileOffset;
+            }
+            
+            if(line.matches("<!DOCTYPE .*")) {
+            	System.out.println("DOC ID: " + docID);
                 bufferOffset = getOffset(brRafReader);
-                System.out.println("bufferOffset INI: " + bufferOffset);
-                currentPosition += previousOffset+1; //Sumo 1 del salto de linea
-                System.out.println("currentPosition INI: " + currentPosition);
+                actualPosition=currentOffset+bufferOffset;
+                initialPosition += actualPosition - (actualPosition-previousPosition) + 1;
                 doc.concat(line);
-        	}
-        	else {
-        		if(line.matches("</html>.*")){
-        			System.out.println("TERMINÉ");
-        			doc.concat("</html>\n");
-        			previousOffset = bufferOffset;
-                    System.out.println("previousOffset: " + previousOffset);
-                    bufferOffset = getOffset(brRafReader);
-                    System.out.println("bufferOffset: " + bufferOffset);
-                	System.out.println("Initial position : " + currentPosition 
-                            + " and offset " + bufferOffset);
-
-                	
-                    //RandomAccessFile raf = new RandomAccessFile("C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\prueba.txt", "rw");
-                    //raf.seek(currentPosition);
-                    
-                   // byte[] arr = new byte[(int) (bufferOffset-currentPosition)];
-                   // raf.readFully(arr);
-                   // String text = new String(arr);
-                   // System.out.println(text);
-                	
-                	currentPosition = 0;
-                	doc = "";
-        		}
-        		else {
-        			previousOffset = bufferOffset;
-                    System.out.println("previousOffset TODOS: " + previousOffset);
-                    //System.out.println("LINE TODOS: " + line);
-                    bufferOffset = getOffset(brRafReader);
-                    System.out.println("bufferOffset TODOS: " + bufferOffset);
-                    doc.concat(line);
-                    if (previousOffset>bufferOffset) {
-                    	RandomAccessFile raf = new RandomAccessFile("C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\prueba.txt", "rw");
-                        raf.seek(currentPosition);
-                        
-                        byte[] arr = new byte[(int) (previousOffset-currentPosition)];
-                        raf.readFully(arr);
-                        String text = new String(arr);
-                        System.out.println(text);
-                    }
-        		}
-        	}
+            }
+            if(line.matches("</html>.*")) {
+                bufferOffset = getOffset(brRafReader);
+            	actualPosition=currentOffset+bufferOffset; 
+                System.out.println("Initial position : " + initialPosition 
+                        + " and offset " + actualPosition);
+                
+                RandomAccessFile raf = new RandomAccessFile("C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\prueba.txt", "rw");
+                raf.seek(initialPosition);
+                byte[] arr = new byte[(int) (actualPosition-initialPosition)];
+                raf.readFully(arr);
+                String text = new String(arr);
+                System.out.println(text);
+                
+                doc.concat(line);
+                initialPosition=0;
+                docID++;
+            }
+            else {
+                bufferOffset = getOffset(brRafReader); 
+                actualPosition = currentOffset+bufferOffset; 
+                doc.concat(line);
+            }
+          previousPosition=actualPosition;
         }
         return lines;
     }
