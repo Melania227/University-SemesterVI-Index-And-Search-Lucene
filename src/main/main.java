@@ -12,11 +12,10 @@ public class main{
 	    long before = System.nanoTime();
 	   
 	    
-	    List<String> result = OwnFileManager.readColection(fileName);
+	    OwnFileManager.readCollection(fileName);
 	    //List<String> result = readDefault(fileName);
 	    long after = System.nanoTime();
 	    double ms = (after - before) / 1e6;
-	    System.out.println("Reading took " + ms + "ms "
-	            + "for " + result.size() + " lines");
+	    System.out.println("Reading took " + ms + "ms ");
 	}
 }
