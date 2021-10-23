@@ -14,13 +14,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import lucene.Indexing;
+
 public class DocProcessing {
 	private ArrayList<OwnDocument> documents;
 	private ArrayList<String> hrefs;
+	private Indexing indexing;
 	private String url;
 	
 	public DocProcessing() {
 		this.documents = new ArrayList<OwnDocument>();
+		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
 		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\prueba.txt";
 	}
@@ -42,6 +46,13 @@ public class DocProcessing {
 	
 	//Functions
     public void processTagsInDoc() throws IOException {
+    	String bodyText = "";
+    	String aText = "";
+    	String hText = "";
+    	String titleText = "";
+    	String hrefText = "";
+    	ArrayList<String> aContent = new ArrayList<String>();
+    	
     	for (OwnDocument doc : documents) {
     		RandomAccessFile raf = new RandomAccessFile(this.url, "rw");
     		raf.seek(doc.getInitialIndex());
@@ -51,75 +62,104 @@ public class DocProcessing {
             raf.close();
             
             System.out.println(doc.getDocID());
-            //this.processTextInBody(text);
-            this.processTextInA(text);
-            //this.processTextInH(text);
-            //this.processTextInTitle(text);
-		}
-    	Set<String> set = new HashSet<>(this.hrefs);
-    	this.hrefs.clear();
-    	this.hrefs.addAll(set);
+            bodyText = this.processTextInBody(text);
+            aContent = this.processTextInA(text);
+            aText = aContent.get(0);
+            hrefText = aContent.get(1);
+            hText = this.processTextInH(text);
+            titleText = this.processTextInTitle(text);
+            this.indexing.startIndex(true, bodyText, aText, hText, titleText, hrefText);
+    	}
     }
 	
-    public void processTextInBody(String text) {
+    public String processTextInBody(String text) {
+    	String bodyText = "";
     	Document document = Jsoup.parse(text);
     	Elements body = document.select ("body");
     	Pattern pat = Pattern.compile("([0-9]*[a-zA-Z_ÁÉÍÓÚÜáéíóúüÑñ]+[0-9]*)");
 		String stringInBody = body.text(); 
-		System.out.println(stringInBody);
+		
+		//System.out.println(stringInBody);
 		Matcher mat = pat.matcher(stringInBody);
 		while(mat.find()) {
-			System.out.println("SI: "+mat.group());
+			bodyText += mat.group() + " ";
+			//System.out.println("SI: "+mat.group());
 	    }
+		return bodyText;
     }
     
-    public void processTextInA(String text) {
+    public ArrayList<String> processTextInA(String text) {
+    	String aText = "";
     	Document document = Jsoup.parse(text);
     	Elements a = document.select ("a");
     	Pattern pat = Pattern.compile("([0-9]*[a-zA-Z_ÁÉÍÓÚÜáéíóúüÑñ]+[0-9]*)");
 		String stringInA = a.text(); 
-		System.out.println(stringInA);
+		//System.out.println(stringInA);
+		
 		Matcher mat = pat.matcher(stringInA);
 		while(mat.find()) {
-			System.out.println("SI: "+mat.group());
+			aText += mat.group() + " ";
+			//System.out.println("SI: "+mat.group());
 	    }
+		
+		ArrayList<String> hrefsAct = new ArrayList<String>();
 		for (Element aFound : a) {
 			String hrefTemp = aFound.attr("href");
 			if(hrefTemp.startsWith("../../../../articles/")) {
 				hrefTemp = hrefTemp.replace("../../../../articles/", "");
-				this.hrefs.add(hrefTemp);
-				System.out.println ("Href: " + hrefTemp);
+				hrefsAct.add(hrefTemp);
+				//System.out.println ("Href: " + hrefTemp);
 			}
 		}
+		
+		String hrefText = "";
+		Set<String> set = new HashSet<>(hrefsAct);
+		hrefsAct.clear();
+		hrefsAct.addAll(set);
+    	for (String hrefAct : hrefsAct) {
+    		hrefText += hrefAct+" ";
+		}
+    	
+    	hrefsAct.clear();
+    	hrefsAct.add(aText);
+    	hrefsAct.add(hrefText);
+    	
+		return hrefsAct;
     }  
     
-    public void processTextInH(String text) {
+    public String processTextInH(String text) {
+    	String hText = "";
     	Document document = Jsoup.parse(text);
     	Pattern pat = Pattern.compile("([0-9]*[a-zA-Z_ÁÉÍÓÚÜáéíóúüÑñ]+[0-9]*)");
     	
     	for (int i = 1; i < 10; i++) {
-    		System.out.println("h"+i);
+    		//System.out.println("h"+i);
     		Elements h = document.select ("h"+i);
     		String stringInH = h.text(); 
-    		System.out.println(stringInH);
+    		//System.out.println(stringInH);
     		Matcher mat = pat.matcher(stringInH);
     		while(mat.find()) {
-    			System.out.println("SI: "+mat.group());
+    			hText += mat.group() + " ";
+    			//System.out.println("SI: "+mat.group());
     	    }
     	}
+    	return hText;
     }  
     
-    public void processTextInTitle(String text) {
+    public String processTextInTitle(String text) {
+    	String titleText = "";
     	Document document = Jsoup.parse(text);
     	Elements head = document.select ("head");
     	Elements title = head.select ("title");
     	Pattern pat = Pattern.compile("([0-9]*[a-zA-Z_ÁÉÍÓÚÜáéíóúüÑñ]+[0-9]*)");
 		String stringInTitle = title.text(); 
-		System.out.println(stringInTitle);
+		//System.out.println(stringInTitle);
 		Matcher mat = pat.matcher(stringInTitle);
 		while(mat.find()) {
-			System.out.println("SI: "+mat.group());
+			titleText += mat.group() + " ";
+			//System.out.println("SI: "+mat.group());
 	    }
+		return titleText;
     }  
         
 }
