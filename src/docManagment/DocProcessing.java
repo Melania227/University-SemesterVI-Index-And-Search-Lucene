@@ -21,12 +21,15 @@ public class DocProcessing {
 	private ArrayList<String> hrefs;
 	private Indexing indexing;
 	private String url;
+	private Boolean doStemming;
 	
 	public DocProcessing() {
 		this.documents = new ArrayList<OwnDocument>();
 		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
 		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\prueba.txt";
+		this.doStemming = true;
+		this.indexing.startIndex(this.doStemming);
 	}
 
     //Getters and Setters
@@ -68,7 +71,7 @@ public class DocProcessing {
             hrefText = aContent.get(1);
             hText = this.processTextInH(text);
             titleText = this.processTextInTitle(text);
-            this.indexing.startIndex(true, bodyText, aText, hText, titleText, hrefText);
+            this.indexing.addDocument(doc.getInitialIndex(), doc.getSize(), this.doStemming, bodyText, aText, hText, titleText, hrefText);
     	}
     }
 	
