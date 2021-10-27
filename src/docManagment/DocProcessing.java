@@ -29,7 +29,7 @@ public class DocProcessing {
 		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
 		this.ignoredDocs = new ArrayList<OwnDocument>();
-		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h2.txt";
+		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h4.txt";
 		this.doStemming = true;
 		this.indexing.startIndex(this.doStemming);
 	}
@@ -66,7 +66,6 @@ public class DocProcessing {
             String text = new String(arr);
             raf.close();
             
-            System.out.println(docAct.getDocID());
             bodyText = this.processTextInBody(text);
             aText = this.processTextInA(text);
             hrefList = this.hrefs;

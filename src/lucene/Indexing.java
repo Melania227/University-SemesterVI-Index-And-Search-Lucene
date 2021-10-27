@@ -57,14 +57,14 @@ public class Indexing {
 		      if (doStemming) {
 		    	  Map<String,Analyzer> analyzerPerField = new HashMap<>();
 		    	  analyzerPerField.put("texto", new SpanishAnalyzer(stopwordsSet));
-		    	  analyzerPerField.put("ref", new StandardAnalyzer());
+		    	  analyzerPerField.put("ref", new StandardAnalyzer(stopwordsSet));
 			      analyzerPerField.put("encab", new SpanishAnalyzer(stopwordsSet));
-			      analyzerPerField.put("titulo", new StandardAnalyzer());
-			      PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerPerField);
+			      analyzerPerField.put("titulo", new StandardAnalyzer(stopwordsSet));
+			      PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(stopwordsSet), analyzerPerField);
 			      iwc = new IndexWriterConfig(wrapper);
 		      }
 		      else {
-				  StandardAnalyzer analyzerWithoutStemming = new StandardAnalyzer();
+				  StandardAnalyzer analyzerWithoutStemming = new StandardAnalyzer(stopwordsSet);
 				  iwc = new IndexWriterConfig(analyzerWithoutStemming);
 		      }
 		      
@@ -105,7 +105,6 @@ public class Indexing {
 		
 		try{
 			this.indexer.addDocument(doc);
-			System.out.println(this.indexer.getDirectory());
 		}
 		catch (IOException e) {
 		    System.out.println(" caught a " + e.getClass() +
