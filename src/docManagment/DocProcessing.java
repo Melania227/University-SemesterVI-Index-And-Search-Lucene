@@ -27,7 +27,7 @@ public class DocProcessing {
 		this.documents = new ArrayList<OwnDocument>();
 		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
-		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\prueba.txt";
+		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h3.txt";
 		this.doStemming = true;
 		this.indexing.startIndex(this.doStemming);
 	}
@@ -53,12 +53,12 @@ public class DocProcessing {
     	String aText = "";
     	String hText = "";
     	String titleText = "";
-    	String hrefText = "";
-    	ArrayList<String> aContent = new ArrayList<String>();
+    	ArrayList<String> hrefList = new ArrayList<String>();
     	
     	for (OwnDocument doc : documents) {
     		RandomAccessFile raf = new RandomAccessFile(this.url, "rw");
     		raf.seek(doc.getInitialIndex());
+    		System.out.println(doc.getSize());
             byte[] arr = new byte[(int) (doc.getSize())];
             raf.readFully(arr);
             String text = new String(arr);
@@ -66,12 +66,12 @@ public class DocProcessing {
             
             System.out.println(doc.getDocID());
             bodyText = this.processTextInBody(text);
-            aContent = this.processTextInA(text);
-            aText = aContent.get(0);
-            hrefText = aContent.get(1);
+            aText = this.processTextInA(text);
+            hrefList = this.hrefs;
             hText = this.processTextInH(text);
             titleText = this.processTextInTitle(text);
-            this.indexing.addDocument(doc.getInitialIndex(), doc.getSize(), this.doStemming, bodyText, aText, hText, titleText, hrefText);
+            this.indexing.addDocument(doc.getInitialIndex(), doc.getSize(), this.doStemming, bodyText, aText, hText, titleText, hrefList);
+            this.hrefs.clear();
     	}
     }
 	
@@ -91,7 +91,7 @@ public class DocProcessing {
 		return bodyText;
     }
     
-    public ArrayList<String> processTextInA(String text) {
+    public String processTextInA(String text) {
     	String aText = "";
     	Document document = Jsoup.parse(text);
     	Elements a = document.select ("a");
@@ -115,19 +115,13 @@ public class DocProcessing {
 			}
 		}
 		
-		String hrefText = "";
 		Set<String> set = new HashSet<>(hrefsAct);
 		hrefsAct.clear();
 		hrefsAct.addAll(set);
-    	for (String hrefAct : hrefsAct) {
-    		hrefText += hrefAct+" ";
-		}
     	
-    	hrefsAct.clear();
-    	hrefsAct.add(aText);
-    	hrefsAct.add(hrefText);
+    	this.hrefs = hrefsAct;
     	
-		return hrefsAct;
+		return aText;
     }  
     
     public String processTextInH(String text) {
