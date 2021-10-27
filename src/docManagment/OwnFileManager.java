@@ -59,6 +59,7 @@ public abstract class OwnFileManager {
                 
                 OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
                 documentProcessing.getDocuments().add(actualDoc);
+                documentProcessing.processTagsInDoc();
                 
                 /*raf.seek(initialPosition);
                 byte[] arr = new byte[(int) (actualPosition-initialPosition)];
@@ -81,7 +82,7 @@ public abstract class OwnFileManager {
         }
         randomAccessFile.close();
         raf.close();
-        documentProcessing.processTagsInDoc();
+        //documentProcessing.processTagsInDoc();
     }
 
     private static int getOffset(BufferedReader bufferedReader) throws Exception {

@@ -7,7 +7,7 @@ import docManagment.OwnFileManager;
 public class main{
 	public static void main(final String[] args) throws Exception {
 
-	    String fileName = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h3.txt";
+	    String fileName = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h2.txt";
 
 	    long before = System.nanoTime();
 	   
