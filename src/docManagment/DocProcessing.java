@@ -27,7 +27,7 @@ public class DocProcessing {
 		this.documents = new ArrayList<OwnDocument>();
 		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
-		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h3.txt";
+		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h2.txt";
 		this.doStemming = true;
 		this.indexing.startIndex(this.doStemming);
 	}
@@ -54,25 +54,25 @@ public class DocProcessing {
     	String hText = "";
     	String titleText = "";
     	ArrayList<String> hrefList = new ArrayList<String>();
+    	OwnDocument docAct = this.documents.get(this.documents.size()-1);
     	
-    	for (OwnDocument doc : documents) {
+    	//for (OwnDocument doc : documents) {
     		RandomAccessFile raf = new RandomAccessFile(this.url, "rw");
-    		raf.seek(doc.getInitialIndex());
-    		System.out.println(doc.getSize());
-            byte[] arr = new byte[(int) (doc.getSize())];
+    		raf.seek(docAct.getInitialIndex());
+            byte[] arr = new byte[(int) (docAct.getSize())];
             raf.readFully(arr);
             String text = new String(arr);
             raf.close();
             
-            System.out.println(doc.getDocID());
+            System.out.println(docAct.getDocID());
             bodyText = this.processTextInBody(text);
             aText = this.processTextInA(text);
             hrefList = this.hrefs;
             hText = this.processTextInH(text);
             titleText = this.processTextInTitle(text);
-            this.indexing.addDocument(doc.getInitialIndex(), doc.getSize(), this.doStemming, bodyText, aText, hText, titleText, hrefList);
+            this.indexing.addDocument(docAct.getInitialIndex(), docAct.getSize(), this.doStemming, bodyText, aText, hText, titleText, hrefList);
             this.hrefs.clear();
-    	}
+    	//}
     }
 	
     public String processTextInBody(String text) {
