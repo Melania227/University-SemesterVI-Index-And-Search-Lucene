@@ -16,7 +16,6 @@ public abstract class OwnFileManager {
         RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "r");
         //BufferedReader brRafReader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
         BufferedReader brRafReader = new BufferedReader(new InputStreamReader(new FileInputStream(randomAccessFile.getFD()), "ISO-8859-1"));
-        RandomAccessFile raf = new RandomAccessFile(fileName, "r");
         String line = null;
         long currentOffset = 0;
         long previousPosition = 0;
@@ -61,7 +60,7 @@ public abstract class OwnFileManager {
                     System.out.println("Tuvo final: " + hasEnding);
                     
                     OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
-                    //documentProcessing.getDocuments().add(actualDoc);
+                    documentProcessing.getDocuments().add(actualDoc);
                     documentProcessing.addIgnoredDoc(actualDoc);
                     //documentProcessing.processTagsInDoc();
                     
@@ -108,7 +107,6 @@ public abstract class OwnFileManager {
           previousPosition=actualPosition;
         }
         randomAccessFile.close();
-        raf.close();
         //documentProcessing.processTagsInDoc();
         System.out.println();
         documentProcessing.printIgnoredDocsAlert();
