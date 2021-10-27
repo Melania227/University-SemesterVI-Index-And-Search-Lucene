@@ -25,6 +25,7 @@ public abstract class OwnFileManager {
         int bufferOffset = 0;
         long actualPosition = 0;
         long docID=1;
+        boolean hasEnding = true;
         while ((line = brRafReader.readLine()) != null) {
         	long fileOffset = randomAccessFile.getFilePointer();
             if (fileOffset != previousOffset) {
@@ -34,8 +35,10 @@ public abstract class OwnFileManager {
                 previousOffset = fileOffset;
             }
             
-            if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">")) {
+            if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">") && hasEnding) {
+            	hasEnding = false;
             	System.out.println("DOC ID: " + docID);
+            	
                 bufferOffset = getOffset(brRafReader);
                 
                 actualPosition=currentOffset+bufferOffset;
@@ -48,41 +51,67 @@ public abstract class OwnFileManager {
               		initialPosition = actualPosition - (actualPosition-previousPosition);
               	}
             }
-            if(line.matches("</html>.*")) {
-                bufferOffset = getOffset(brRafReader);
-                if(docID==7414) {
-                	System.out.println("LA POSICION ES EN EL FINAL: " + initialPosition);
+            else {
+            	if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">")) {
+            		bufferOffset = getOffset(brRafReader);
+                	actualPosition=currentOffset+bufferOffset; 
+                    System.out.println("Initial position : " + initialPosition 
+                            + " and offset " + actualPosition + " and lenght " + (actualPosition-initialPosition));
+                    
+                    System.out.println("Tuvo final: " + hasEnding);
+                    
+                    OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
+                    //documentProcessing.getDocuments().add(actualDoc);
+                    documentProcessing.addIgnoredDoc(actualDoc);
+                    //documentProcessing.processTagsInDoc();
+                    
+                    initialPosition=0;
+                    docID++;
+                    previousPosition=actualPosition;
+                    
+                	hasEnding = false;
+                	System.out.println("DOC ID: " + docID);
+                    bufferOffset = getOffset(brRafReader);
+                    
+                    actualPosition=currentOffset+bufferOffset;
+                    //initialPosition += actualPosition - (actualPosition-previousPosition) + 1;
+                    
+                    if(previousPosition != 0) {
+                    	initialPosition = actualPosition - (actualPosition-previousPosition) + 1;
+                  	}
+                  	else {
+                  		initialPosition = actualPosition - (actualPosition-previousPosition);
+                  	}
                 }
+            }
+            
+            if(line.matches("</html>.*")) {
+            	hasEnding = true;
+                bufferOffset = getOffset(brRafReader);
             	actualPosition=currentOffset+bufferOffset; 
                 System.out.println("Initial position : " + initialPosition 
                         + " and offset " + actualPosition + " and lenght " + (actualPosition-initialPosition));
                 
+                System.out.println("Tuvo final: " + hasEnding);
+                
                 OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
                 documentProcessing.getDocuments().add(actualDoc);
                 documentProcessing.processTagsInDoc();
-                
-                /*raf.seek(initialPosition);
-                byte[] arr = new byte[(int) (actualPosition-initialPosition)];
-                raf.readFully(arr);
-                String text = new String(arr);
-                System.out.println(text);*/
                 
                 initialPosition=0;
                 docID++;
             }
             else {
                 bufferOffset = getOffset(brRafReader); 
-                actualPosition = currentOffset+bufferOffset;
-                if(docID==7414) {
-                	System.out.println("LA POSICION ES: " + initialPosition);
-                }
-                
+                actualPosition = currentOffset+bufferOffset;            
             }
           previousPosition=actualPosition;
         }
         randomAccessFile.close();
         raf.close();
         //documentProcessing.processTagsInDoc();
+        System.out.println();
+        documentProcessing.printIgnoredDocsAlert();
     }
 
     private static int getOffset(BufferedReader bufferedReader) throws Exception {
