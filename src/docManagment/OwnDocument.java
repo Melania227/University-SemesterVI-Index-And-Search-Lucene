@@ -5,6 +5,7 @@ public class OwnDocument {
 	private long docID;
 	private long size;
     private long initialIndex;
+    private boolean hasEnding;
 
 	public OwnDocument(){}
     
@@ -12,6 +13,14 @@ public class OwnDocument {
     	this.docID = id;
     	this.size = size;
     	this.initialIndex = index;
+    	this.hasEnding = true;
+    }
+    
+    public OwnDocument(long id, long size, long index, boolean end){
+    	this.docID = id;
+    	this.size = size;
+    	this.initialIndex = index;
+    	this.hasEnding = end;
     }
     
     //Getters and Setters
