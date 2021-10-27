@@ -78,7 +78,7 @@ public class Indexing {
 		}
 	}
 	
-	public void addDocument(Long initialIndex, Long docLenght, Boolean doStemming, String bodyText, String aText, String hText, String titleText, String hrefText) {
+	public void addDocument(Long initialIndex, Long docLenght, Boolean doStemming, String bodyText, String aText, String hText, String titleText, ArrayList<String> hrefText) {
 		Document doc = new Document();
 		if (!doStemming) {
 			//El Spanish Analyzer quita tildes, pero el Standard no, y si no se hace Stemming ese es el que se usa
@@ -95,10 +95,12 @@ public class Indexing {
 		doc.add(new TextField("titulo", titleText, Field.Store.NO));
 		
 		//Campos almacenados para informacion, pero no para busqueda
-		//Los links es meter el string completo y el lo separa, ¿o hay que meter uno a uno?
-		doc.add(new StringField("enlace", hrefText, Field.Store.YES));
 		doc.add(new StringField("docStart", String.valueOf(initialIndex), Field.Store.YES));
 		doc.add(new StringField("docLenght", String.valueOf(docLenght), Field.Store.YES));
+		
+		for (String hrefAct : hrefText) {
+			doc.add(new StringField("enlace", hrefAct, Field.Store.YES));
+		}
 		
 		try{
 			this.indexer.addDocument(doc);

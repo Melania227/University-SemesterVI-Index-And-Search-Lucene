@@ -34,20 +34,32 @@ public abstract class OwnFileManager {
                 previousOffset = fileOffset;
             }
             
-            if(line.matches("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">.*")) {
+            if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">")) {
             	System.out.println("DOC ID: " + docID);
                 bufferOffset = getOffset(brRafReader);
+                
                 actualPosition=currentOffset+bufferOffset;
-                initialPosition += actualPosition - (actualPosition-previousPosition) + 1;
+                //initialPosition += actualPosition - (actualPosition-previousPosition) + 1;
+                
+                if(previousPosition != 0) {
+                	initialPosition = actualPosition - (actualPosition-previousPosition) + 1;
+              	}
+              	else {
+              		initialPosition = actualPosition - (actualPosition-previousPosition);
+              	}
             }
             if(line.matches("</html>.*")) {
                 bufferOffset = getOffset(brRafReader);
+                if(docID==7414) {
+                	System.out.println("LA POSICION ES EN EL FINAL: " + initialPosition);
+                }
             	actualPosition=currentOffset+bufferOffset; 
                 System.out.println("Initial position : " + initialPosition 
-                        + " and offset " + actualPosition);
+                        + " and offset " + actualPosition + " and lenght " + (actualPosition-initialPosition));
                 
                 OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
                 documentProcessing.getDocuments().add(actualDoc);
+                documentProcessing.processTagsInDoc();
                 
                 /*raf.seek(initialPosition);
                 byte[] arr = new byte[(int) (actualPosition-initialPosition)];
@@ -60,13 +72,17 @@ public abstract class OwnFileManager {
             }
             else {
                 bufferOffset = getOffset(brRafReader); 
-                actualPosition = currentOffset+bufferOffset; 
+                actualPosition = currentOffset+bufferOffset;
+                if(docID==7414) {
+                	System.out.println("LA POSICION ES: " + initialPosition);
+                }
+                
             }
           previousPosition=actualPosition;
         }
         randomAccessFile.close();
         raf.close();
-        documentProcessing.processTagsInDoc();
+        //documentProcessing.processTagsInDoc();
     }
 
     private static int getOffset(BufferedReader bufferedReader) throws Exception {
