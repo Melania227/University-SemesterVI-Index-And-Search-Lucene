@@ -18,6 +18,7 @@ import lucene.Indexing;
 
 public class DocProcessing {
 	private ArrayList<OwnDocument> documents;
+	private ArrayList<OwnDocument> ignoredDocs;
 	private ArrayList<String> hrefs;
 	private Indexing indexing;
 	private String url;
@@ -27,6 +28,7 @@ public class DocProcessing {
 		this.documents = new ArrayList<OwnDocument>();
 		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
+		this.ignoredDocs = new ArrayList<OwnDocument>();
 		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h2.txt";
 		this.doStemming = true;
 		this.indexing.startIndex(this.doStemming);
@@ -158,5 +160,14 @@ public class DocProcessing {
 	    }
 		return titleText;
     }  
-        
+       
+    public void addIgnoredDoc(OwnDocument doc) {
+    	ignoredDocs.add(doc);
+    }
+    
+    public void printIgnoredDocsAlert() {
+    	for (OwnDocument ignored : ignoredDocs) {
+			System.out.println("ALERTA: El documento ID: " + ignored.getDocID() +" no ha sido tomado en cuenta para la indexación debido a que no tiene formato de final.");
+		}
+    }
 }
