@@ -37,6 +37,8 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+import myOwnAnalyzer.myOwnAnalyzer;
+
 public class Indexing {
 	private String indexPath;
 	private IndexWriter indexer;
@@ -53,18 +55,19 @@ public class Indexing {
 		try {
 		      this.dir = FSDirectory.open(Paths.get(this.indexPath));
 		      
+		      //Nota: MyOwnAnalyzer es el StandardAnalyzer pero con modificaciones propias del problema que estamos intentando resolver para la tarea
 		      IndexWriterConfig iwc;
 		      if (doStemming) {
 		    	  Map<String,Analyzer> analyzerPerField = new HashMap<>();
-		    	  analyzerPerField.put("texto", new SpanishAnalyzer(stopwordsSet));
+		    	  analyzerPerField.put("texto", new myOwnAnalyzer(stopwordsSet));
 		    	  analyzerPerField.put("ref", new StandardAnalyzer(stopwordsSet));
 			      analyzerPerField.put("encab", new SpanishAnalyzer(stopwordsSet));
-			      analyzerPerField.put("titulo", new StandardAnalyzer(stopwordsSet));
-			      PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new StandardAnalyzer(stopwordsSet), analyzerPerField);
+			      analyzerPerField.put("titulo", new myOwnAnalyzer(stopwordsSet));
+			      PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new myOwnAnalyzer(stopwordsSet), analyzerPerField);
 			      iwc = new IndexWriterConfig(wrapper);
 		      }
 		      else {
-				  StandardAnalyzer analyzerWithoutStemming = new StandardAnalyzer(stopwordsSet);
+		    	  myOwnAnalyzer analyzerWithoutStemming = new myOwnAnalyzer(stopwordsSet);
 				  iwc = new IndexWriterConfig(analyzerWithoutStemming);
 		      }
 		      
@@ -81,13 +84,6 @@ public class Indexing {
 	
 	public void addDocument(Long initialIndex, Long docLenght, Boolean doStemming, String bodyText, String aText, String hText, String titleText, ArrayList<String> hrefText) {
 		Document doc = new Document();
-		if (!doStemming) {
-			//El Spanish Analyzer quita tildes, pero el Standard no, y si no se hace Stemming ese es el que se usa
-			aText = deletePunctuation(bodyText);
-			aText = deletePunctuation(hText);
-		}		
-		aText = deletePunctuation(aText);
-		aText = deletePunctuation(titleText);
 
 		//Campos utilizados en la busqueda
 		doc.add(new TextField("texto", bodyText, Field.Store.NO));
