@@ -20,7 +20,7 @@ public abstract class OwnFileManager {
         long currentOffset = 0;
         long previousPosition = 0;
         long previousOffset = -1;
-        long initialPosition = -1;
+        long initialPosition = 0;
         int bufferOffset = 0;
         long actualPosition = 0;
         long docID=1;
@@ -33,6 +33,8 @@ public abstract class OwnFileManager {
                 }
                 previousOffset = fileOffset;
             }
+            
+            //System.out.println(line);
             
             if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">") && hasEnding) {
             	hasEnding = false;
@@ -51,7 +53,7 @@ public abstract class OwnFileManager {
               	}
             }
             else {
-            	if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">")) {
+            	if(line.matches("^?<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">")) {
             		bufferOffset = getOffset(brRafReader);
                 	actualPosition=currentOffset+bufferOffset; 
                     System.out.println("Initial position : " + initialPosition 

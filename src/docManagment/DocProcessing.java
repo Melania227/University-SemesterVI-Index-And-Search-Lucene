@@ -29,7 +29,7 @@ public class DocProcessing {
 		this.indexing = new Indexing();
 		this.hrefs = new ArrayList<String>();
 		this.ignoredDocs = new ArrayList<OwnDocument>();
-		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h4.txt";
+		this.url = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h8.txt";
 		this.doStemming = true;
 		this.indexing.startIndex(this.doStemming);
 	}
