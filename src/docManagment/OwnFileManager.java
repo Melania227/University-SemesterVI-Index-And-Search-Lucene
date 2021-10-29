@@ -13,6 +13,7 @@ public abstract class OwnFileManager {
 
     public static void readCollection(String fileName) throws Exception {
     	DocProcessing documentProcessing = new DocProcessing();
+    	documentProcessing.setUrl(fileName);
         RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "r");
         //BufferedReader brRafReader = new BufferedReader(new FileReader(randomAccessFile.getFD()));
         BufferedReader brRafReader = new BufferedReader(new InputStreamReader(new FileInputStream(randomAccessFile.getFD()), "ISO-8859-1"));
@@ -109,6 +110,7 @@ public abstract class OwnFileManager {
           previousPosition=actualPosition;
         }
         randomAccessFile.close();
+        documentProcessing.getIndexer().getIndexWriter().close();
         //documentProcessing.processTagsInDoc();
         System.out.println();
         documentProcessing.printIgnoredDocsAlert();

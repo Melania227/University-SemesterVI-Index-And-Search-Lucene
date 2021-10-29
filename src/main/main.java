@@ -1,21 +1,97 @@
 package main;
 
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.es.SpanishAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 
 import docManagment.OwnFileManager;
+import lucene.Searching;
+import myOwnAnalyzer.myOwnAnalyzer;
 
 public class main{
+
+	
+    public static void menu() throws Exception {
+    	String selection;
+        try (Scanner input = new Scanner(System.in)) {
+			System.out.println("Recuperación De Información Textual - TP2");
+			System.out.println("-------------------------\n");
+			System.out.println("1 - Indexar una colección");
+			System.out.println("2 - Realizar una consulta");
+			System.out.println("3 - Salir");
+			System.out.print("Seleccione una opción: ");
+			selection = input.nextLine();
+			String fileName ="";
+			String consulta = "";
+			String tipo = "";
+			System.out.println("-------------------------\n");
+			switch(selection) {
+				case "1":{
+					System.out.println("Ingrese el path del archivo:");
+					 while(fileName=="") {
+					 	 fileName = input.nextLine(); //"C:\Users\Laptop\OneDrive\Escritorio\\h8.txt"
+					 }
+					 OwnFileManager.readCollection(fileName);
+					 System.out.println("Indexación completada");
+					 System.out.println("-------------------------\n");
+					 fileName="";
+					 break;
+				}
+				case "2":{
+					 System.out.println("Ingrese la consulta a realizar:");
+					 while(consulta=="") {
+						 consulta = input.nextLine();
+					 }
+					 System.out.println("Se realiza la consulta con stemming (S/N):");
+					 while(tipo=="") {
+						 tipo = input.nextLine();
+						 if(!tipo.equals("S") && !tipo.equals("N") ) {
+							 System.out.println("Ingrese un valor válido (S/N):");
+							 tipo="";
+						 }
+					 }
+					 Searching search = new Searching();
+					 search.search(consulta,tipo);
+					 System.out.println("-------------------------\n");
+					 break;
+				}
+				case "3":{
+					System.out.println("Adios");
+					return;
+				}
+				default:{
+					System.out.println("Error. Intente nuevamente.");
+					System.out.println("-------------------------\n");
+					break;
+				}
+			}
+		}
+    
+}
 	public static void main(final String[] args) throws Exception {
 
-	    String fileName = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h8.txt";
-
-	    long before = System.nanoTime();
+		menu();
+	   /* long before = System.nanoTime();
 	   
 	    
-	    OwnFileManager.readCollection(fileName);
 	    //List<String> result = readDefault(fileName);
 	    long after = System.nanoTime();
 	    double ms = (after - before) / 1e6;
-	    System.out.println("Reading took " + ms + "ms ");
+	    System.out.println("Reading took " + ms + "ms ");*/
 	}
 }

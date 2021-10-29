@@ -48,7 +48,7 @@ public class Indexing {
 	
 	
 	public Indexing() {
-		this.indexPath = "C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\PRUEBAS\\INDEX";
+		this.indexPath = ".\\PRUEBAS\\INDEX";
 	}
 	
 	public void startIndex(Boolean doStemming){
@@ -59,8 +59,8 @@ public class Indexing {
 		      IndexWriterConfig iwc;
 		      if (doStemming) {
 		    	  Map<String,Analyzer> analyzerPerField = new HashMap<>();
-		    	  analyzerPerField.put("texto", new myOwnAnalyzer(stopwordsSet));
-		    	  analyzerPerField.put("ref", new StandardAnalyzer(stopwordsSet));
+		    	  analyzerPerField.put("texto", new SpanishAnalyzer(stopwordsSet));
+		    	  analyzerPerField.put("ref", new myOwnAnalyzer(stopwordsSet));
 			      analyzerPerField.put("encab", new SpanishAnalyzer(stopwordsSet));
 			      analyzerPerField.put("titulo", new myOwnAnalyzer(stopwordsSet));
 			      PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(new myOwnAnalyzer(stopwordsSet), analyzerPerField);
@@ -89,7 +89,7 @@ public class Indexing {
 		doc.add(new TextField("texto", bodyText, Field.Store.NO));
 		doc.add(new TextField("ref", aText, Field.Store.NO));
 		doc.add(new TextField("encab", hText, Field.Store.NO));
-		doc.add(new TextField("titulo", titleText, Field.Store.NO));
+		doc.add(new TextField("titulo", titleText, Field.Store.YES));
 		
 		//Campos almacenados para informacion, pero no para busqueda
 		doc.add(new StringField("docStart", String.valueOf(initialIndex), Field.Store.YES));
@@ -115,6 +115,10 @@ public class Indexing {
 	
 	public void setIndexPath(String indexPath) {
 		this.indexPath = indexPath;
+	}
+	
+	public IndexWriter getIndexWriter() {
+		return this.indexer;
 	}
 	
 	private String deletePunctuation(String str) {
