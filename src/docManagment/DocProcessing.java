@@ -24,9 +24,10 @@ public class DocProcessing {
 	private String url;
 	private Boolean doStemming;
 	
-	public DocProcessing() {
+	public DocProcessing(String p) {
 		this.documents = new ArrayList<OwnDocument>();
 		this.indexing = new Indexing();
+		this.indexing.setIndexPath(p);
 		this.hrefs = new ArrayList<String>();
 		this.ignoredDocs = new ArrayList<OwnDocument>();
 		this.url = "";

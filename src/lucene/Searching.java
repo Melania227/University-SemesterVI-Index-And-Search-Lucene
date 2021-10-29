@@ -4,9 +4,11 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import java.awt.Desktop;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.FileHandler;
+import java.io.File;
+import java.io.FileWriter;   // Import the FileWriter class
+import java.io.IOException;  // Import the IOException class to handle errors
 
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.IndexSearcher;
@@ -57,8 +62,9 @@ public class Searching {
 		this.pos = len;
 	}
 	
-	public int menuSearching() throws ParseException, IOException{
-		while(true) {
+	public void menuSearching() throws ParseException, IOException{
+		boolean bandera = true;
+		while(bandera) {
 			String selection = "";
 	        System.out.println("-------------------------\n");
 	        System.out.println("1 - Ver los siguientes 20 documentos");
@@ -81,18 +87,13 @@ public class Searching {
 			 	}
 			 	case "2":{
 			 		System.out.println("Ingrese el número del documento:");
-			 		int id =  input.nextInt();
-			 		Document d = this.s.doc(hits[id].doc);
-		    		//RandomAccessFile raf = new RandomAccessFile("C:\\Users\\Laptop\\OneDrive\\Escritorio\\h8.txt", "rw");
-			 		RandomAccessFile raf = new RandomAccessFile("C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h8.txt", "rw");
-			 		raf.seek(Integer.parseInt(d.get("docStart")));
-		            byte[] arr = new byte[Integer.parseInt(d.get("docLenght"))];
-		            System.out.println(d.get("docStart"));
-		            System.out.println(d.get("docLenght"));
-		            raf.readFully(arr);
-		            String text = new String(arr);
-		            System.out.println(text);
-		            raf.close();
+			 		String id =  input.nextLine();
+			 		System.out.println("Ingrese el path de la colección:");
+			 		String path =  input.nextLine();
+			 		System.out.println("Ingrese el path donde desea que se guarde el documento:");
+			 		String path2 =  input.nextLine();
+			 		getDoc(Integer.parseInt(id), path, path2);
+			 		
 			 		break;
 			 	}
 			 	case "3":{
@@ -106,6 +107,10 @@ public class Searching {
 					System.out.print(enlace);
 			 		break;
 			 	}
+			 	case "4":{
+			 		bandera = false;
+			 		break;
+			 	}
 			 	default: {
 			 		System.out.println("Error. Intente nuevamente.");
 					System.out.println("-------------------------\n");
@@ -117,6 +122,37 @@ public class Searching {
 		
 	}
 	
+	public void getDoc(int id, String path, String path2) throws IOException {
+		Document d = this.s.doc(hits[id].doc);
+ 		RandomAccessFile raf = new RandomAccessFile(path, "rw");
+ 		raf.seek(Integer.parseInt(d.get("docStart")));
+        byte[] arr = new byte[Integer.parseInt(d.get("docLenght"))];
+        System.out.println(d.get("docStart"));
+        System.out.println(d.get("docLenght"));
+        raf.readFully(arr);
+        String text = new String(arr);
+        writeFile(text,path2, id);
+        raf.close();
+		
+	}
+
+	public void writeFile(String text, String path2, int id) {
+		try {  
+		      FileWriter myWriter = new FileWriter(path2+"Doc"+id+".html");
+		      myWriter.write(text);
+		      myWriter.close();
+		      System.out.println("Archivo HTML creado");
+		      File file = new java.io.File(path2+"Doc"+id+".html").getAbsoluteFile();
+              Desktop.getDesktop().open(file);
+		    } 
+		catch (IOException e) {
+		      System.out.println("Error. No se ha podido crear el archivo");
+		      e.printStackTrace();
+		      System.out.println("-------------------------\n");
+		} 
+		
+	}
+
 	public void search(String query, String stemm) throws IOException, ParseException {
 		String fileName = ".\\PRUEBAS\\INDEX";
 		Query q;

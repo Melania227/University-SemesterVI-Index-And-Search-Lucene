@@ -27,8 +27,10 @@ public class main{
 
 	
     public static void menu() throws Exception {
-    	String selection;
-        try (Scanner input = new Scanner(System.in)) {
+    	boolean bandera = true;
+		while(bandera) {
+	    	String selection;
+	    	Scanner input = new Scanner(System.in);
 			System.out.println("Recuperación De Información Textual - TP2");
 			System.out.println("-------------------------\n");
 			System.out.println("1 - Indexar una colección");
@@ -37,16 +39,17 @@ public class main{
 			System.out.print("Seleccione una opción: ");
 			selection = input.nextLine();
 			String fileName ="";
+			String path ="";
 			String consulta = "";
 			String tipo = "";
 			System.out.println("-------------------------\n");
 			switch(selection) {
 				case "1":{
-					System.out.println("Ingrese el path del archivo:");
-					 while(fileName=="") {
-					 	 fileName = input.nextLine(); //"C:\Users\Laptop\OneDrive\Escritorio\\h8.txt"
-					 }
-					 OwnFileManager.readCollection(fileName);
+					 System.out.println("Ingrese el path del archivo:");
+					 fileName = input.nextLine(); //"C:\Users\Laptop\OneDrive\Escritorio\h8.txt"
+					 System.out.println("Ingrese el path para la indexación:");
+					 path = input.nextLine(); //"C:\Users\Laptop\OneDrive\Escritorio\\h8.txt"
+					 OwnFileManager.readCollection(fileName,path);
 					 System.out.println("Indexación completada");
 					 System.out.println("-------------------------\n");
 					 fileName="";
@@ -54,16 +57,12 @@ public class main{
 				}
 				case "2":{
 					 System.out.println("Ingrese la consulta a realizar:");
-					 while(consulta=="") {
-						 consulta = input.nextLine();
-					 }
+					 consulta = input.nextLine();
 					 System.out.println("Se realiza la consulta con stemming (S/N):");
-					 while(tipo=="") {
-						 tipo = input.nextLine();
-						 if(!tipo.equals("S") && !tipo.equals("N") ) {
-							 System.out.println("Ingrese un valor válido (S/N):");
-							 tipo="";
-						 }
+					 tipo = input.nextLine();
+					 if(!tipo.equals("S") && !tipo.equals("N") ) {
+						 System.out.println("Ingrese un valor válido (S/N):");
+						 tipo="";
 					 }
 					 Searching search = new Searching();
 					 search.search(consulta,tipo);
@@ -72,7 +71,7 @@ public class main{
 				}
 				case "3":{
 					System.out.println("Adios");
-					return;
+					bandera= false;
 				}
 				default:{
 					System.out.println("Error. Intente nuevamente.");
@@ -85,7 +84,8 @@ public class main{
 }
 	public static void main(final String[] args) throws Exception {
 
-		menu();
+		 menu();
+		 System.out.println("listito");
 	   /* long before = System.nanoTime();
 	   
 	    

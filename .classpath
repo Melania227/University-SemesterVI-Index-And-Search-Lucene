@@ -6,10 +6,10 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/melan/OneDrive/6. TEC-SEXTO SEMESTRE/RECUPERACION DE INFORMACION TEXTUAL/PROYECTO 2/lucene-8.10.0/core/lucene-core-8.10.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/melan/OneDrive/6. TEC-SEXTO SEMESTRE/RECUPERACION DE INFORMACION TEXTUAL/PROYECTO 2/lucene-8.10.0/demo/lucene-demo-8.10.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/melan/OneDrive/6. TEC-SEXTO SEMESTRE/RECUPERACION DE INFORMACION TEXTUAL/PROYECTO 2/lucene-8.10.0/queryparser/lucene-queryparser-8.10.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/melan/OneDrive/6. TEC-SEXTO SEMESTRE/RECUPERACION DE INFORMACION TEXTUAL/PROYECTO 2/lucene-8.10.0/analysis/common/lucene-analyzers-common-8.10.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/melan/OneDrive/6. TEC-SEXTO SEMESTRE/RECUPERACION DE INFORMACION TEXTUAL/PROYECTO 2/jsoup-1.14.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Laptop/Downloads/jsoup-1.14.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Laptop/Downloads/lucene-8.10.0/analysis/common/lucene-analyzers-common-8.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Laptop/Downloads/lucene-8.10.0/core/lucene-core-8.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Laptop/Downloads/lucene-8.10.0/demo/lucene-demo-8.10.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Laptop/Downloads/lucene-8.10.0/queryparser/lucene-queryparser-8.10.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

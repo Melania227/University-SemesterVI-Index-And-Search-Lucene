@@ -48,7 +48,6 @@ public class Indexing {
 	
 	
 	public Indexing() {
-		this.indexPath = ".\\PRUEBAS\\INDEX";
 	}
 	
 	public void startIndex(Boolean doStemming){
