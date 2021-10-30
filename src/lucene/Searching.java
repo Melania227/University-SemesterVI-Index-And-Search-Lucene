@@ -83,13 +83,15 @@ public class Searching {
 			 		System.out.println("Ingrese el número del documento:");
 			 		int id =  input.nextInt();
 			 		Document d = this.s.doc(hits[id].doc);
-		    		RandomAccessFile raf = new RandomAccessFile("C:\\Users\\Laptop\\OneDrive\\Escritorio\\h8.txt", "rw");
-		    		raf.seek(Integer.parseInt(d.get("docStart")));
+		    		//RandomAccessFile raf = new RandomAccessFile("C:\\Users\\Laptop\\OneDrive\\Escritorio\\h8.txt", "rw");
+			 		RandomAccessFile raf = new RandomAccessFile("C:\\Users\\melan\\OneDrive\\6. TEC-SEXTO SEMESTRE\\RECUPERACION DE INFORMACION TEXTUAL\\PROYECTO 2\\Colecciones\\h8.txt", "rw");
+			 		raf.seek(Integer.parseInt(d.get("docStart")));
 		            byte[] arr = new byte[Integer.parseInt(d.get("docLenght"))];
 		            System.out.println(d.get("docStart"));
 		            System.out.println(d.get("docLenght"));
 		            raf.readFully(arr);
 		            String text = new String(arr);
+		            System.out.println(text);
 		            raf.close();
 			 		break;
 			 	}
