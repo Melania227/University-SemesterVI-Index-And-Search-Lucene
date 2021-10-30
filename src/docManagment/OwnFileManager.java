@@ -11,8 +11,8 @@ import java.util.List;
 
 public abstract class OwnFileManager {
 
-    public static void readCollection(String fileName, String path) throws Exception {
-    	DocProcessing documentProcessing = new DocProcessing(path);
+    public static void readCollection(String fileName, String path, String pathStopWords) throws Exception {
+    	DocProcessing documentProcessing = new DocProcessing(path, pathStopWords);
     	documentProcessing.setUrl(fileName);
         RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "r");
         BufferedReader brRafReader = new BufferedReader(new InputStreamReader(new FileInputStream(randomAccessFile.getFD()), "ISO-8859-1"));
@@ -38,7 +38,6 @@ public abstract class OwnFileManager {
             
             if(line.matches("^<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">") && hasEnding) {
             	hasEnding = false;
-            	System.out.println("DOC ID: " + docID);
             	
                 bufferOffset = getOffset(brRafReader);
                 
@@ -56,11 +55,7 @@ public abstract class OwnFileManager {
             	if(line.matches("^?<!DOCTYPE html PUBLIC \\\"-//W3C//DTD XHTML 1\\.0 Transitional//EN\\\" \\\"http://www\\.w3\\.org/TR/xhtml1/DTD/xhtml1-transitional\\.dtd\\\">")) {
             		bufferOffset = getOffset(brRafReader);
                 	actualPosition=currentOffset+bufferOffset; 
-                    System.out.println("Initial position : " + initialPosition 
-                            + " and offset " + actualPosition + " and lenght " + (actualPosition-initialPosition));
-                    
-                    System.out.println("Tuvo final: " + hasEnding);
-                    
+                                        
                     OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
                     documentProcessing.getDocuments().add(actualDoc);
                     documentProcessing.addIgnoredDoc(actualDoc);
@@ -71,7 +66,6 @@ public abstract class OwnFileManager {
                     previousPosition=actualPosition;
                     
                 	hasEnding = false;
-                	System.out.println("DOC ID: " + docID);
                     bufferOffset = getOffset(brRafReader);
                     
                     actualPosition=currentOffset+bufferOffset;
@@ -90,10 +84,6 @@ public abstract class OwnFileManager {
             	hasEnding = true;
                 bufferOffset = getOffset(brRafReader);
             	actualPosition=currentOffset+bufferOffset; 
-                System.out.println("Initial position : " + initialPosition 
-                        + " and offset " + actualPosition + " and lenght " + (actualPosition-initialPosition));
-                
-                System.out.println("Tuvo final: " + hasEnding);
                 
                 OwnDocument actualDoc = new OwnDocument(docID, (actualPosition-initialPosition), initialPosition);
                 documentProcessing.getDocuments().add(actualDoc);

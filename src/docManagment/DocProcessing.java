@@ -24,9 +24,9 @@ public class DocProcessing {
 	private String url;
 	private Boolean doStemming;
 	
-	public DocProcessing(String p) {
+	public DocProcessing(String p, String pathStopwords) {
 		this.documents = new ArrayList<OwnDocument>();
-		this.indexing = new Indexing();
+		this.indexing = new Indexing(pathStopwords);
 		this.indexing.setIndexPath(p);
 		this.hrefs = new ArrayList<String>();
 		this.ignoredDocs = new ArrayList<OwnDocument>();

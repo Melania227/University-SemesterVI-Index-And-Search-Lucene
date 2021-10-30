@@ -16,7 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.FileHandler;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;   // Import the FileWriter class
 import java.io.IOException;  // Import the IOException class to handle errors
 
@@ -39,8 +42,6 @@ import org.apache.lucene.document.Document;
 
 public class Searching {
 	
-	final static ArrayList<String> stopWords = new ArrayList<String>(Arrays.asList("a", "acá", "ahí", "ajena", "ajenas", "ajeno", "ajenos", "al", "algo", "algún", "alguna", "algunas", "alguno", "algunos", "allá", "alli", "allí", "ambos", "ampleamos", "ante", "antes", "aquel", "aquella", "aquellas", "aquello", "aquellos", "aqui", "aquí", "arriba", "asi", "atras", "aun", "aunque", "bajo", "bastante", "bien", "cabe", "cada", "casi", "cierta", "ciertas", "cierto", "ciertos", "como", "cómo", "con", "conmigo", "conseguimos", "conseguir", "consigo", "consigue", "consiguen", "consigues", "contigo", "contra", "cual", "cuales", "cualquier", "cualquiera", "cualquieras", "cuan", "cuán", "cuando", "cuanta", "cuánta", "cuantas", "cuántas", "cuanto", "cuánto", "cuantos", "cuántos", "de", "dejar", "del", "demás", "demas", "demasiada", "demasiadas", "demasiado", "demasiados", "dentro", "desde", "donde", "dos", "el", "él", "ella", "ellas", "ello", "ellos", "empleais", "emplean", "emplear", "empleas", "empleo", "en", "encima", "entonces", "entre", "era", "eramos", "eran", "eras", "eres", "es", "esa", "esas", "ese", "eso", "esos", "esta", "estaba", "estado", "estais", "estamos", "estan", "estar", "estas", "este", "esto", "estos", "estoy", "etc", "fin", "fue", "fueron", "fui", "fuimos", "gueno", "ha", "hace", "haceis", "hacemos", "hacen", "hacer", "haces", "hacia", "hago", "hasta", "incluso", "intenta", "intentais", "intentamos", "intentan", "intentar", "intentas", "intento", "ir", "jamás", "junto", "juntos", "la", "largo", "las", "lo", "los", "mas", "más", "me", "menos", "mi", "mía", "mia", "mias", "mientras", "mio", "mío", "mios", "mis", "misma", "mismas", "mismo", "mismos", "modo", "mucha", "muchas", "muchísima", "muchísimas", "muchísimo", "muchísimos", "mucho", "muchos", "muy", "nada", "ni", "ningun", "ninguna", "ningunas", "ninguno", "ningunos", "no", "nos", "nosotras", "nosotros", "nuestra", "nuestras", "nuestro", "nuestros", "nunca", "os", "otra", "otras", "otro", "otros", "para", "parecer", "pero", "poca", "pocas", "poco", "pocos", "podeis", "podemos", "poder", "podria", "podriais", "podriamos", "podrian", "podrias", "por", "por qué", "porque", "primero", "puede", "pueden", "puedo", "pues", "que", "qué", "querer", "quien", "quién", "quienes", "quienesquiera", "quienquiera", "quiza", "quizas", "sabe", "sabeis", "sabemos", "saben", "saber", "sabes", "se", "segun", "ser", "si", "sí", "siempre", "siendo	sin", "sín", "sino", "so", "sobre", "sois", "solamente", "solo", "somos", "soy", "sr", "sra", "sres", "sta", "su", "sus", "suya", "suyas", "suyo", "suyos", "tal", "tales", "también", "tambien", "tampoco", "tan", "tanta", "tantas", "tanto", "tantos", "te", "teneis", "tenemos", "tener", "tengo", "ti", "tiempo", "tiene", "tienen", "toda", "todas", "todo", "todos", "tomar", "trabaja", "trabajais", "trabajamos", "trabajan", "trabajar", "trabajas", "trabajo", "tras", "tú", "tu", "tus", "tuya", "tuyo", "tuyos", "ultimo", "un", "una", "unas", "uno", "unos", "usa", "usais", "usamos", "usan", "usar", "usas", "uso", "usted", "ustedes", "va", "vais", "valor", "vamos", "van", "varias", "varios", "vaya", "verdad", "verdadera", "vosotras", "vosotros", "voy", "vuestra", "vuestras", "vuestro", "vuestros", "y", "ya", "yo")); //Filters both words
-	final static CharArraySet stopwordsSet = new CharArraySet(stopWords, true);
 	public long totalHits;
 	private ScoreDoc[] hits;
 	private IndexSearcher s;
@@ -92,13 +93,14 @@ public class Searching {
 			 		String path =  input.nextLine();
 			 		System.out.println("Ingrese el path donde desea que se guarde el documento:");
 			 		String path2 =  input.nextLine();
-			 		getDoc(Integer.parseInt(id), path, path2);
+			 		getDoc(Integer.parseInt(id)-1, path, path2);
 			 		
 			 		break;
 			 	}
 			 	case "3":{
 			 		System.out.println("Ingrese el número del documento:");
 			 		int id =  input.nextInt();
+			 		id--;
 			 		Document d = this.s.doc(hits[id].doc);
 			 		String enlace = "";
 					for (IndexableField x : d.getFields("enlace")) {
@@ -124,11 +126,10 @@ public class Searching {
 	
 	public void getDoc(int id, String path, String path2) throws IOException {
 		Document d = this.s.doc(hits[id].doc);
+		System.out.println("Doc. #"+(id+1) + ": "+ d.get("titulo"));
  		RandomAccessFile raf = new RandomAccessFile(path, "rw");
  		raf.seek(Integer.parseInt(d.get("docStart")));
         byte[] arr = new byte[Integer.parseInt(d.get("docLenght"))];
-        System.out.println(d.get("docStart"));
-        System.out.println(d.get("docLenght"));
         raf.readFully(arr);
         String text = new String(arr);
         writeFile(text,path2, id);
@@ -138,11 +139,12 @@ public class Searching {
 
 	public void writeFile(String text, String path2, int id) {
 		try {  
-		      FileWriter myWriter = new FileWriter(path2+"Doc"+id+".html");
+		      FileWriter myWriter = new FileWriter(path2+"\\Doc"+(id+1)+".html");
 		      myWriter.write(text);
 		      myWriter.close();
+		      System.out.println(path2+"Doc"+(id+1)+".html");
 		      System.out.println("Archivo HTML creado");
-		      File file = new java.io.File(path2+"Doc"+id+".html").getAbsoluteFile();
+		      File file = new java.io.File(path2+"\\Doc"+(id+1)+".html").getAbsoluteFile();
               Desktop.getDesktop().open(file);
 		    } 
 		catch (IOException e) {
@@ -153,9 +155,9 @@ public class Searching {
 		
 	}
 
-	public void search(String query, String stemm) throws IOException, ParseException {
-		String fileName = ".\\PRUEBAS\\INDEX";
+	public void search(String query, String stemm, String fileName, String stpw) throws IOException, ParseException {
 		Query q;
+		CharArraySet stopwordsSet = getStopwords(stpw);
 		Directory dir = FSDirectory.open(Paths.get(fileName));
 		if(stemm.equals("S")) {
 			Map<String,Analyzer> analyzerPerField = new HashMap<>();
@@ -194,6 +196,26 @@ public class Searching {
 		}
 		else {
 			System.out.println("No se encontraron resultados");
+		}
+	}
+	
+	private CharArraySet getStopwords (String url) {
+		ArrayList<String> stopWords = new ArrayList<String>();
+		
+		try (BufferedReader brRafReader = new BufferedReader(new FileReader(url))){
+			String line;
+			while ((line = brRafReader.readLine()) != null) {
+				stopWords.add(line);
+			}
+			CharArraySet stopwordsSet = new CharArraySet(stopWords, true);
+			return stopwordsSet;
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

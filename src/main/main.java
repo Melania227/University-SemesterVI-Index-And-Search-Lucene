@@ -45,13 +45,25 @@ public class main{
 			System.out.println("-------------------------\n");
 			switch(selection) {
 				case "1":{
-					 System.out.println("Ingrese el path del archivo:");
+					 System.out.println("Ingrese el path de la colección:");
 					 fileName = input.nextLine(); //"C:\Users\Laptop\OneDrive\Escritorio\h8.txt"
 					 System.out.println("Ingrese el path para la indexación:");
 					 path = input.nextLine(); //"C:\Users\Laptop\OneDrive\Escritorio\\h8.txt"
-					 OwnFileManager.readCollection(fileName,path);
+					 System.out.println("Ingrese el path de stopwords:");
+					 String path2 = input.nextLine();
+					 System.out.println("Indexando, un momento por favor");
+					 
+					 long before = System.nanoTime();
+					    
+					 OwnFileManager.readCollection(fileName,path,path2);
+				     
+					 long after = System.nanoTime();
+				     double min = (((after - before) / 1e6)/1000)/60;
+				     				     
 					 System.out.println("Indexación completada");
+					 System.out.println("La indexación tuvo una duración de:  " + min + "s");
 					 System.out.println("-------------------------\n");
+					 
 					 fileName="";
 					 break;
 				}
@@ -62,16 +74,21 @@ public class main{
 					 tipo = input.nextLine();
 					 if(!tipo.equals("S") && !tipo.equals("N") ) {
 						 System.out.println("Ingrese un valor válido (S/N):");
-						 tipo="";
+						 tipo = input.nextLine(); 
 					 }
+					 System.out.println("Ingrese el path de la indexación:");
+					 String path2 = input.nextLine();
+					 System.out.println("Ingrese el path de stopwords:");
+					 String path3 = input.nextLine();
 					 Searching search = new Searching();
-					 search.search(consulta,tipo);
+					 search.search(consulta,tipo,path2,path3);
 					 System.out.println("-------------------------\n");
 					 break;
 				}
 				case "3":{
 					System.out.println("Adios");
 					bandera= false;
+					break;
 				}
 				default:{
 					System.out.println("Error. Intente nuevamente.");
@@ -85,7 +102,6 @@ public class main{
 	public static void main(final String[] args) throws Exception {
 
 		 menu();
-		 System.out.println("listito");
 	   /* long before = System.nanoTime();
 	   
 	    
